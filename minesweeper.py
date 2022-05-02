@@ -10,27 +10,21 @@ def main():
         curses.mousemask(1)
 
         mines = numpy.pad(numpy.random.rand(*size) < ratio, 1)
-        safe = [*zip(*numpy.nonzero(~mines))]
         board = numpy.pad(numpy.full(size, 9), 1)
-        while True:
+        while (board[~mines] == 9).any():
             scr.addstr(1, 0, str(board[1:-1,1:-1]).replace("9", " "))
-            if (board[~mines] != 9).all(): break
             if scr.getch() != curses.KEY_MOUSE: continue
-            _, x, y, _, _ = curses.getmouse()
+            x, y = curses.getmouse()[1:3]
             p = [(y, x//2)]
             for y, x in p:
-                if (y, x) not in safe:
-                    p.extend(safe)
-                    continue
+                if mines[y,x]: board[:] = 0
                 if board[y,x] != 9: continue
                 around = numpy.indices((3,3)).reshape(2,-1).T - 1 + [y,x]
                 board[y,x] = mines[tuple(around.T)].sum()
-                if board[y,x] == 0: p.extend(around)
+                if board[y,x] == 0: p += [*around]
 
         scr.addstr("END")
         scr.getch()
 
     finally:
         curses.endwin()
-
-main()
