@@ -7,8 +7,9 @@ s.keypad(1)
 cs.mousemask(1)
 mn = np.pad(np.random.rand(*sz) < r, 1)
 bd = np.pad(np.full(sz, 9), 1)
-while (bd[~mn] == 9).any():
+while 1:
     s.addstr(1, 0, str(bd[1:-1,1:-1]).replace("9", " "))
+    if (bd[~mn] != 9).all(): break
     if s.getch() != cs.KEY_MOUSE: continue
     x, y = cs.getmouse()[1:3]
     p = [(y, x//2)]

@@ -11,8 +11,9 @@ def main():
 
         mines = numpy.pad(numpy.random.rand(*size) < ratio, 1)
         board = numpy.pad(numpy.full(size, 9), 1)
-        while (board[~mines] == 9).any():
+        while True:
             scr.addstr(1, 0, str(board[1:-1,1:-1]).replace("9", " "))
+            if (board[~mines] != 9).all(): break
             if scr.getch() != curses.KEY_MOUSE: continue
             x, y = curses.getmouse()[1:3]
             p = [(y, x//2)]
